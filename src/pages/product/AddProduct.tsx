@@ -185,7 +185,7 @@ export function AddProduct() {
                         </RadioGroup>
                     </div>
 
-                    <Button type="button" className="w-full bg-red-900 cursor-pointer">
+                    <Button type="button" className="w-full bg-red-900 dark:text-white dark:hover:text-black cursor-pointer ">
                         Cadastrar
                     </Button>
                 </form>

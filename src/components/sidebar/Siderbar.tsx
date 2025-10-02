@@ -7,14 +7,14 @@ import ThemeMode from "../themeMode/ThemeMode";
 
 export function Sidebar() {
     return (
-        <div className="full w-full flex-col bg-muted/40">
+        <div className="full w-full flex-col bg-muted/40 ">
 
-            <aside className="fixed top-0 bottom-0 left-0 z-10 hidden w-14 border-r bg-background sm:flex ">
+            <aside className="fixed top-0 bottom-0 left-0 z-10 hidden w-14 border-r bg-background sm:flex dark:bg-gray-900">
                 <nav className="flex flex-col items-center gap-4 px-2 py-3">
                     <TooltipProvider>
                         <Link
                             to="/inicio"
-                            className="flex h-9 w-9 shrink-0 items-center justify-center bg-red-900 text-primary-foreground rounded-full"
+                            className="flex h-9 w-9 shrink-0 items-center justify-center bg-red-900 text-primary-foreground dark:text-muted-foreground rounded-full"
                         >
                             <Package className="h-4 w-4" />
                             <span className="sr-only">Dashboard Avatar</span>
@@ -99,20 +99,20 @@ export function Sidebar() {
                 </nav>
             </aside>
 
-            <div className="sm:hidden flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
-                <header className="sticky top-0 z-30 flex justify-between h-14 items-center px-4 border-b bg-background gap-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+            <div className="sm:hidden flex flex-col sm:gap-4 sm:py-4 sm:pl-14 ">
+                <header className="sticky top-0 z-30 flex justify-between h-14 items-center px-4 border-b bg-background dark:bg-gray-900 gap-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
                     <Sheet>
                         <SheetTrigger asChild>
-                            <Button size="icon" variant="outline" className="sm:hidden hover:cursor-pointer">
-                                <PanelBottom className="w-5 h-5" />
+                            <Button size="icon" variant="outline" className="sm:hidden hover:cursor-pointer dark:bg-gray-900">
+                                <PanelBottom className="w-5 h-5 " />
                                 <span className="sr-only">Abrir | Fechar Menu</span>
                             </Button>
                         </SheetTrigger>
 
-                        <SheetContent side="left" className="sm:max-w-x px-4 py-2">
+                        <SheetContent side="left" className="sm:max-w-x px-4 py-2 dark:bg-gray-900">
                             <nav className="grid gap-6 text-lg font-medium">
                                 <Link to={"/inicio"}
-                                    className="flex h-10 w-10 bg-red-900 rounded-full text-lg items-center justify-center text-primary-foreground md:text-base gap-2"
+                                    className="flex h-10 w-10 bg-red-900 rounded-full text-lg items-center justify-center text-primary-foreground dark:text-muted-foreground md:text-base gap-2"
                                 >
                                     <Package className="h-5 w-5 transition-all" />
                                     <span className="sr-only">Logo</span>

@@ -17,7 +17,7 @@ export default function DialogAddSubCategory({ openSubCategory, onOpenChange }: 
 
   return (
     <Dialog open={openSubCategory} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="dark:bg-gray-900">
         <div className="flex flex-col items-center gap-2">
           <DialogHeader>
             <DialogTitle className="sm:text-center">
@@ -42,7 +42,7 @@ export default function DialogAddSubCategory({ openSubCategory, onOpenChange }: 
             </div>
           </div>
 
-          <Button type="button" className="w-full bg-red-900 cursor-pointer">
+          <Button type="button" className="w-full bg-red-900 dark:text-white dark:hover:text-black cursor-pointer">
             Cadastrar
           </Button>
         </form>

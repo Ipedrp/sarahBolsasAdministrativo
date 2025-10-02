@@ -17,8 +17,8 @@ export default function DialogAddCategory({ open, onOpenChange }: DialogAddCateg
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <div className="flex flex-col items-center gap-2">
+      <DialogContent className="dark:bg-gray-900">
+        <div className="flex flex-col items-center gap-2 dark:bg-gray-900">
           <DialogHeader>
             <DialogTitle className="sm:text-center">
               Adicionar Categoria
@@ -42,7 +42,7 @@ export default function DialogAddCategory({ open, onOpenChange }: DialogAddCateg
             </div>
           </div>
 
-          <Button type="button" className="w-full bg-red-900 cursor-pointer">
+          <Button type="button" className="w-full bg-red-900 dark:text-white dark:hover:text-black cursor-pointer">
             Cadastrar
           </Button>
         </form>

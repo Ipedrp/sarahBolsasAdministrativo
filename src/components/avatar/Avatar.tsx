@@ -14,12 +14,12 @@ import { Link } from "react-router"
 export default function Avatar() {
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+            <DropdownMenuTrigger asChild className="dark:bg-gray-900">
                 <Button size="icon" variant="outline" aria-label="Open account menu">
                     <CircleUserRoundIcon size={16} aria-hidden="true" />
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="max-w-64">
+            <DropdownMenuContent className="max-w-64 dark:bg-gray-900">
                 <DropdownMenuLabel className="flex flex-col">
                     <span>Conectado como</span>
                     <span className="text-foreground text-xs font-normal">

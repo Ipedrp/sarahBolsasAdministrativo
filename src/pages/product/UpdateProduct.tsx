@@ -175,8 +175,8 @@ export function UpdateProduct() {
                         </RadioGroup>
                     </div>
 
-                    <Button type="button" className="w-full bg-red-900 cursor-pointer">
-                        Cadastrar
+                    <Button type="button" className="w-full bg-red-900 dark:text-white dark:hover:text-black cursor-pointer">
+                        Atualizar
                     </Button>
                 </form>
             </main >

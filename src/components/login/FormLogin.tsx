@@ -61,7 +61,7 @@ export function LoginForm() {
                     </div>
                 </div>
                 <Link to={"/inicio"}>
-                    <Button type="submit" className="w-full bg-red-800 hover:cursor-pointer">
+                    <Button type="submit" className="w-full bg-red-800 dark:text-white dark:hover:text-red-800 hover:cursor-pointer">
                         Entrar
                     </Button>
                 </Link>

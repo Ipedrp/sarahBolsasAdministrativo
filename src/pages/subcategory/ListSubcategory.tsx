@@ -1,5 +1,3 @@
-"use client";
-
 import { PencilRuler, Plus, Search, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
@@ -88,12 +86,12 @@ export function ListSubcategory() {
                       <Link to={`/subcategorias/atualizar`}>
                         <PencilRuler
                           size={20}
-                          className="text-yellow-700 cursor-pointer"
+                          className="text-yellow-700 dark:text-yellow-400 cursor-pointer"
                         />
                       </Link>
                       <Trash2
                         size={20}
-                        className="text-red-800 cursor-pointer"
+                        className="text-red-800 dark:text-red-600 cursor-pointer"
                       />
                     </div>
                   </TableCell>
@@ -113,14 +111,14 @@ export function ListSubcategory() {
             <Button
               onClick={prevPage}
               disabled={page === 1}
-              className="bg-transparent text-black hover:text-blue-400 cursor-pointer hover:bg-transparent"
+              className="bg-transparent text-black dark:text-white hover:text-blue-400 cursor-pointer hover:bg-transparent"
             >
               Anterior
             </Button>
             <Button
               onClick={nextPage}
               disabled={page === totalPages}
-              className="bg-transparent text-black hover:text-blue-400 cursor-pointer hover:bg-transparent"
+              className="bg-transparent text-black dark:text-white hover:text-blue-400 cursor-pointer hover:bg-transparent"
             >
               Próximo
             </Button>
