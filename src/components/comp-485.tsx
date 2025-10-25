@@ -101,7 +101,7 @@ type Item = {
 }
 
 // Custom filter function for multi-column searching
-const multiColumnFilterFn: FilterFn<Item> = (row, columnId, filterValue) => {
+const multiColumnFilterFn: FilterFn<Item> = (row, _columnId, filterValue) => {
   const searchableRowContent =
     `${row.original.name} ${row.original.email}`.toLowerCase()
   const searchTerm = (filterValue ?? "").toLowerCase()
@@ -718,7 +718,7 @@ export default function Component() {
   )
 }
 
-function RowActions({ row }: { row: Row<Item> }) {
+function RowActions({  }: { row: Row<Item> }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
