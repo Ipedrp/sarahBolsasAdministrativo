@@ -1,19 +1,19 @@
 import { useEffect, useId, useMemo, useRef, useState } from "react"
 import {
-  ColumnDef,
-  ColumnFiltersState,
-  FilterFn,
   flexRender,
   getCoreRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  PaginationState,
-  Row,
-  SortingState,
   useReactTable,
-  VisibilityState,
+  type ColumnDef,
+  type ColumnFiltersState,
+  type FilterFn,
+  type PaginationState,
+  type Row,
+  type SortingState,
+  type VisibilityState,
 } from "@tanstack/react-table"
 import {
   ChevronDownIcon,
