@@ -11,27 +11,33 @@ import {
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Link } from "react-router";
+import { useEffect } from "react";
+import { useCategoria } from "@/context/CategoryContext";
 
 // ---- Dados estáticos (apenas nome e descrição) ----
-const categoriasFake = Array.from({ length: 23 }, (_, i) => ({
-  id: i + 1,
-  nome: `Categoria ${i + 1}`,
-  descricao: `Descrição da categoria ${i + 1}`,
-}));
+// const categoriasFake = Array.from({ length: 23 }, (_, i) => ({
+//   id: i + 1,
+//   nome: `Categoria ${i + 1}`,
+//   descricao: `Descrição da categoria ${i + 1}`,
+// }));
 
 // ---- Componente ----
 export function ListCategory() {
+
+  const { getAllCategorias, categorias, deletarCategoria, loading, errorMessage } = useCategoria();
+
+
   const [page, setPage] = useState(1);
   const itemsPerPage = 5;
 
   const startIndex = (page - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
 
-  const currentItems = categoriasFake.slice(startIndex, endIndex);
-  const totalPages = Math.ceil(categoriasFake.length / itemsPerPage);
+  const currentItems = categorias.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(categorias.length / itemsPerPage);
   const remainingItems =
-    categoriasFake.length - endIndex > 0
-      ? categoriasFake.length - endIndex
+    categorias.length - endIndex > 0
+      ? categorias.length - endIndex
       : 0;
 
   const nextPage = () => {
@@ -41,6 +47,22 @@ export function ListCategory() {
   const prevPage = () => {
     if (page > 1) setPage(page - 1);
   };
+
+  useEffect(() => {
+    getAllCategorias();
+  }, []);
+
+  async function handleDelete(id: string) {
+    try {
+      await deletarCategoria(id);
+    } catch {
+      // erro já tratado no contexto
+    }
+  }
+
+
+  if (loading) return <p>Carregando...</p>;
+  if (errorMessage) return <p>{errorMessage}</p>;
 
   return (
     <section className="flex flex-col gap-6">
@@ -72,7 +94,7 @@ export function ListCategory() {
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[200px]">Nome</TableHead>
-                <TableHead>Descrição</TableHead>
+                <TableHead>Tipo</TableHead>
                 <TableHead className="text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
@@ -80,7 +102,7 @@ export function ListCategory() {
               {currentItems.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell className="font-medium">{item.nome}</TableCell>
-                  <TableCell>{item.descricao}</TableCell>
+                  <TableCell>{item.tipo}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-3">
                       <Link to={`/categorias/atualizar`}>
@@ -89,10 +111,14 @@ export function ListCategory() {
                           className="text-yellow-700 dark:text-yellow-400 cursor-pointer"
                         />
                       </Link>
-                      <Trash2
-                        size={20}
-                        className="text-red-800 dark:text-red-600 cursor-pointer"
-                      />
+                      <button onClick={() => handleDelete(item.id)}
+                        disabled={loading}>
+                        <Trash2
+                          size={20}
+                          className="text-red-800 dark:text-red-600 cursor-pointer"
+
+                        />
+                      </button>
                     </div>
                   </TableCell>
                 </TableRow>
