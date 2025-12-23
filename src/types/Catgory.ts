@@ -5,3 +5,10 @@ export interface Category {
   nome: string;
   tipo_categoria: TipoCategoria;
 }
+
+
+export interface Categoria {
+  id: string;
+  nome: string;
+  tipo: "MASCULINA" | "FEMININA";
+}
