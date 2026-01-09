@@ -7,7 +7,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { useCategoria } from "@/context/CategoryContext";
+import { useCategoria } from "@/contexts/CategoryContext";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type CategoryFormData, categoriaSchema } from "@/schemas/CategorySchema";

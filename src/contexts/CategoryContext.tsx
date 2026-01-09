@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
-import { api } from "../server/api";
+import { apiPrivate } from "../server/api";
 import type { CategoryFormData } from "../schemas/CategorySchema";
 import axios from "axios";
 import type { Categoria } from "@/types/Catgory";
@@ -30,7 +30,7 @@ export function CategoriaProvider({ children }: CategoriaProviderProps) {
 
   async function criarCategoria(data: CategoryFormData) {
     try {
-      await api.post("/categoria/new", data);
+      await apiPrivate.post("/categoria/new", data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setErrorMessage(
@@ -47,7 +47,7 @@ export function CategoriaProvider({ children }: CategoriaProviderProps) {
   async function getAllCategorias() {
     try {
       setLoading(true);
-      const response = await api.get<Categoria[]>("/categoria/getAll");
+      const response = await apiPrivate.get<Categoria[]>("/categoria/getAll");
       setCategorias(response.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -66,7 +66,7 @@ export function CategoriaProvider({ children }: CategoriaProviderProps) {
     try {
       setLoading(true);
 
-      await api.delete(`/categoria/delete/${id}`);
+      await apiPrivate.delete(`/categoria/delete/${id}`);
 
       // remove do estado local
       setCategorias((prev) =>

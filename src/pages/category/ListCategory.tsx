@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Link } from "react-router";
 import { useEffect } from "react";
-import { useCategoria } from "@/context/CategoryContext";
+import { useCategoria } from "@/contexts/CategoryContext";
 
 // ---- Dados estáticos (apenas nome e descrição) ----
 // const categoriasFake = Array.from({ length: 23 }, (_, i) => ({

@@ -12,3 +12,4 @@ export interface Categoria {
   nome: string;
   tipo: "MASCULINA" | "FEMININA";
 }
+

@@ -1,7 +1,19 @@
+
+
 import axios from "axios";
 
-export const api = axios.create({
-  baseURL: "https://sara-bolsas-backend.onrender.com/", 
+const baseURL = "https://sara-bolsas-backend.onrender.com/";
+
+/**
+ * Axios público (login, rotas sem auth)
+ */
+export const apiPublic = axios.create({
+  baseURL,
 });
 
-
+/**
+ * Axios privado (rotas protegidas)
+ */
+export const apiPrivate = axios.create({
+  baseURL,
+});

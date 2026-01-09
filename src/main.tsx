@@ -2,18 +2,22 @@ import { createRoot } from 'react-dom/client'
 import { AppRouter } from './router/AppRouter'
 import { BrowserRouter } from 'react-router'
 import "./index.css";
-import { ThemeProvider } from './context/ThemeContext';
-import { CategoriaProvider } from './context/CategoryContext';
-import { SubCategoriaProvider } from './context/SubcategoryContext';
+import { ThemeProvider } from './contexts/ThemeContext';
+import { CategoriaProvider } from './contexts/CategoryContext';
+import { SubCategoriaProvider } from './contexts/SubcategoryContext';
+import { AuthProvider } from './contexts/AuthContext';
+import "@/server/interceptors";
 
 createRoot(document.getElementById('root')!).render(
   <ThemeProvider>
-    <BrowserRouter>
-      <CategoriaProvider>
-        <SubCategoriaProvider>
-          <AppRouter />
-        </SubCategoriaProvider>
-      </CategoriaProvider>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <CategoriaProvider>
+          <SubCategoriaProvider>
+            <AppRouter />
+          </SubCategoriaProvider>
+        </CategoriaProvider>
+      </BrowserRouter>
+    </AuthProvider>
   </ThemeProvider>
 ) 
