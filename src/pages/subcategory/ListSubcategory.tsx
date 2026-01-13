@@ -9,29 +9,35 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router";
+import { useSubCategoria } from "@/contexts/SubcategoryContext";
+import { useCategoria } from "@/contexts/CategoryContext";
 
 // ---- Dados estáticos (apenas nome e descrição) ----
-const categoriasFake = Array.from({ length: 23 }, (_, i) => ({
-  id: i + 1,
-  nome: `Subcategoria ${i + 1}`,
-  descricao: `Descrição da subcategoria ${i + 1}`,
-}));
+// const categoriasFake = Array.from({ length: 23 }, (_, i) => ({
+//   id: i + 1,
+//   nome: `Subcategoria ${i + 1}`,
+//   descricao: `Descrição da subcategoria ${i + 1}`,
+// }));
 
 // ---- Componente ----
 export function ListSubcategory() {
+
+  const { getAllSubCategorias, loading, errorMessage, subCategorias, deletarSubCategoria } = useSubCategoria();
+  const { getAllCategorias, categorias } = useCategoria();
+
   const [page, setPage] = useState(1);
   const itemsPerPage = 5;
 
   const startIndex = (page - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
 
-  const currentItems = categoriasFake.slice(startIndex, endIndex);
-  const totalPages = Math.ceil(categoriasFake.length / itemsPerPage);
+  const currentItems = subCategorias.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(subCategorias.length / itemsPerPage);
   const remainingItems =
-    categoriasFake.length - endIndex > 0
-      ? categoriasFake.length - endIndex
+    subCategorias.length - endIndex > 0
+      ? subCategorias.length - endIndex
       : 0;
 
   const nextPage = () => {
@@ -41,6 +47,31 @@ export function ListSubcategory() {
   const prevPage = () => {
     if (page > 1) setPage(page - 1);
   };
+
+  useEffect(() => {
+    getAllSubCategorias();
+    getAllCategorias();
+  }, []);
+
+  const categoriaMap = categorias.reduce((acc, cat) => {
+    acc[cat.id] = cat.nome;
+    return acc;
+  }, {} as Record<string, string>);
+
+
+  // useEffect(() => {
+  //   if (id) {
+  //     getCategoriaById(id);
+  //   }
+  // }, [id]);
+
+  async function handleDelete(id: string) {
+    try {
+      await deletarSubCategoria(id);
+    } catch {
+      // erro já tratado no contexto
+    }
+  }
 
   return (
     <section className="flex flex-col gap-6">
@@ -72,7 +103,7 @@ export function ListSubcategory() {
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[200px]">Nome</TableHead>
-                <TableHead>Descrição</TableHead>
+                <TableHead>Tipo de Categoria</TableHead>
                 <TableHead className="text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
@@ -80,7 +111,9 @@ export function ListSubcategory() {
               {currentItems.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell className="font-medium">{item.nome}</TableCell>
-                  <TableCell>{item.descricao}</TableCell>
+                  <TableCell>
+                    {categoriaMap[item.categoriaId] || "Categoria não encontrada"}
+                  </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-3">
                       <Link to={`/subcategorias/atualizar`}>
@@ -89,10 +122,12 @@ export function ListSubcategory() {
                           className="text-yellow-700 dark:text-yellow-400 cursor-pointer"
                         />
                       </Link>
-                      <Trash2
-                        size={20}
-                        className="text-red-800 dark:text-red-600 cursor-pointer"
-                      />
+                      <button onClick={() => handleDelete(item.id)} disabled={loading}>
+                        <Trash2
+                          size={20}
+                          className="text-red-800 dark:text-red-600 cursor-pointer"
+                        />
+                      </button>
                     </div>
                   </TableCell>
                 </TableRow>

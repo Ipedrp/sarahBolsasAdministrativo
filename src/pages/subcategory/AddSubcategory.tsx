@@ -37,6 +37,7 @@ export function AddSubcategory() {
 
     async function onSubmit(data: SubCategoryFormData) {
         await criarSubCategoria(data);
+        setSuccessOpen(true)
         reset();
     }
 

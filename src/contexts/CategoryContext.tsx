@@ -7,6 +7,7 @@ import type { Categoria } from "@/types/Catgory";
 interface CategoriaContextData {
   criarCategoria: (data: CategoryFormData) => Promise<void>;
   getAllCategorias: () => Promise<void>;
+  getCategoriaById: (id: string) => Promise<void>;
   deletarCategoria: (id: string) => Promise<void>;
   categorias: Categoria[];
   errorMessage: string | null;
@@ -25,6 +26,8 @@ export function CategoriaProvider({ children }: CategoriaProviderProps) {
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
+  const [categoriaSelecionada, setCategoriaSelecionada] = useState<Categoria | null>(null);
+
   const [loading, setLoading] = useState(false);
 
 
@@ -62,6 +65,34 @@ export function CategoriaProvider({ children }: CategoriaProviderProps) {
     }
   }
 
+  async function getCategoriaById(id: string) {
+    try {
+      setLoading(true);
+
+      const response = await apiPrivate.get<Categoria>(`/categoria/getById/${id}`);
+
+      setCategoriaSelecionada(response.data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 404) {
+          setErrorMessage("Categoria não encontrada");
+          setCategoriaSelecionada(null);
+        } else {
+          setErrorMessage(
+            error.response?.data?.message || "Erro ao buscar categoria"
+          );
+        }
+      } else {
+        setErrorMessage("Erro inesperado");
+      }
+
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+
   async function deletarCategoria(id: string) {
     try {
       setLoading(true);
@@ -97,6 +128,7 @@ export function CategoriaProvider({ children }: CategoriaProviderProps) {
     <CategoriaContext.Provider value={{
       criarCategoria,
       getAllCategorias,
+      getCategoriaById,
       deletarCategoria,
       categorias,
       errorMessage,
