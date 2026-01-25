@@ -10,7 +10,7 @@ import { Routes, Route } from "react-router";
 import { UpdateCategory } from "@/pages/category/UpdateCategory";
 import { ListSubcategory } from "@/pages/subcategory/ListSubcategory";
 import { AddSubcategory } from "@/pages/subcategory/AddSubcategory";
-import { UpdateSubcategory } from "@/pages/subcategory/UpdateSubcategort";
+import { UpdateSubcategory } from "@/pages/subcategory/UpdateSubcategory";
 import { PrivateRoute } from "./PrivateRouter";
 
 
@@ -30,7 +30,7 @@ export function AppRouter() {
                     <Route path="/categorias/atualizar" element={<UpdateCategory />} />
                     <Route path="/subcategorias" element={<ListSubcategory />} />
                     <Route path="/subcategorias/adicionar" element={<AddSubcategory />} />
-                    <Route path="/subcategorias/atualizar" element={<UpdateSubcategory />} />
+                    <Route path="/subcategorias/atualizar/:id" element={<UpdateSubcategory />} />
                 </Route>
             </Route>
         </Routes>

@@ -7,6 +7,8 @@ import type { SubCategoria } from "@/types/SubCategory";
 
 interface SubCategoriaContextData {
   criarSubCategoria: (data: SubCategoryFormData) => Promise<void>;
+  atualizarSubCategoria: (id: string, data: SubCategoryFormData) => Promise<void>;
+  getSubCategoriaById: (id: string) => Promise<SubCategoria>;
   getAllSubCategorias: () => Promise<void>;
   deletarSubCategoria: (id: string) => Promise<void>;
   subCategorias: SubCategoria[];
@@ -83,6 +85,55 @@ export function SubCategoriaProvider({ children }: SubCategoriaProviderProps) {
     }
   }
 
+  async function getSubCategoriaById(id: string) {
+    try {
+      setLoading(true);
+      const response = await apiPrivate.get<SubCategoria>(
+        `/subcategoria/${id}`
+      );
+      console.log("RETORNO API:", response.data);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        setErrorMessage(
+          error.response?.data?.message || "Erro ao buscar subcategoria"
+        );
+      } else {
+        setErrorMessage("Erro inesperado");
+      }
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function atualizarSubCategoria(
+    id: string,
+    data: SubCategoryFormData
+  ) {
+    try {
+      setLoading(true);
+      await apiPrivate.put(`/subcategoria/${id}`, data);
+
+      setSubCategorias((prev) =>
+        prev.map((sub) =>
+          sub.id === id ? { ...sub, ...data } : sub
+        )
+      );
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        setErrorMessage(
+          error.response?.data?.message || "Erro ao atualizar subcategoria"
+        );
+      } else {
+        setErrorMessage("Erro inesperado");
+      }
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  }
+
   function clearError() {
     setErrorMessage(null);
   }
@@ -91,6 +142,8 @@ export function SubCategoriaProvider({ children }: SubCategoriaProviderProps) {
     <SubCategoriaContext.Provider
       value={{
         criarSubCategoria,
+        atualizarSubCategoria,
+        getSubCategoriaById,
         getAllSubCategorias,
         deletarSubCategoria,
         subCategorias,
@@ -99,6 +152,7 @@ export function SubCategoriaProvider({ children }: SubCategoriaProviderProps) {
         loading,
       }}
     >
+
       {children}
     </SubCategoriaContext.Provider>
   );

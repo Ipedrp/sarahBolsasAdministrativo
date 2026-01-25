@@ -24,7 +24,7 @@ import { useCategoria } from "@/contexts/CategoryContext";
 // ---- Componente ----
 export function ListSubcategory() {
 
-  const { getAllSubCategorias, loading, errorMessage, subCategorias, deletarSubCategoria } = useSubCategoria();
+  const { getAllSubCategorias, loading, subCategorias, deletarSubCategoria } = useSubCategoria();
   const { getAllCategorias, categorias } = useCategoria();
 
   const [page, setPage] = useState(1);
@@ -116,7 +116,7 @@ export function ListSubcategory() {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-3">
-                      <Link to={`/subcategorias/atualizar`}>
+                      <Link to={`/subcategorias/atualizar/${item.id}`}>
                         <PencilRuler
                           size={20}
                           className="text-yellow-700 dark:text-yellow-400 cursor-pointer"
