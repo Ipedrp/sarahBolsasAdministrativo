@@ -77,10 +77,12 @@ export function UpdateSubcategory() {
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 w-full">
                     <div className="space-y-4">
                         <div>
+                            <Label>Nome</Label>
                             <Input placeholder="Nome" {...register("nome")} />
-                            {errors.nome && <span>{errors.nome.message}</span>}
+                            {errors.nome && <span className="text-red-600 dark:text-red-800  text-sm">{errors.nome.message}</span>}
                         </div>
                         <div>
+                            <Label>Subcategoria</Label>
                             <select {...register("categoriaId")} className="w-full border p-2 rounded">
                                 <option value="">Selecione a categoria</option>
                                 {categorias.map((cat) => (
@@ -89,7 +91,7 @@ export function UpdateSubcategory() {
                                     </option>
                                 ))}
                             </select>
-                            {errors.categoriaId && <span>{errors.categoriaId.message}</span>}
+                            {errors.categoriaId && <span className="text-red-600 dark:text-red-800  text-sm">{errors.categoriaId.message}</span>}
                         </div>
                     </div>
 

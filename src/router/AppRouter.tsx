@@ -27,7 +27,7 @@ export function AppRouter() {
                     <Route path="/produtos/atualizar" element={<UpdateProduct />} />
                     <Route path="/categorias" element={<ListCategory />} />
                     <Route path="/categorias/adicionar" element={<AddCategory />} />
-                    <Route path="/categorias/atualizar" element={<UpdateCategory />} />
+                    <Route path="/categorias/atualizar/:id" element={<UpdateCategory />} />
                     <Route path="/subcategorias" element={<ListSubcategory />} />
                     <Route path="/subcategorias/adicionar" element={<AddSubcategory />} />
                     <Route path="/subcategorias/atualizar/:id" element={<UpdateSubcategory />} />

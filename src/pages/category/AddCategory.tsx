@@ -73,12 +73,12 @@ export function AddCategory() {
     dark:text-white
     text-sm rounded-base
     placeholder:text-body
-    dark:placeholder:text-red-400 mb-1" {...register("tipo_categoria")}>
+    dark:placeholder:text-red-400 mb-1" {...register("tipo")}>
                                 <option value="">Selecione</option>
                                 <option value="MASCULINA">Masculina</option>
                                 <option value="FEMININA">Feminina</option>
                             </select>
-                            {errors.tipo_categoria && <span className="text-red-600 dark:text-red-800 text-sm">{errors.tipo_categoria.message}</span>}
+                            {errors.tipo && <span className="text-red-600 dark:text-red-800 text-sm">{errors.tipo.message}</span>}
                         </div>
 
                     </div>

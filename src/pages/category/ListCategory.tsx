@@ -105,7 +105,7 @@ export function ListCategory() {
                   <TableCell>{item.tipo}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-3">
-                      <Link to={`/categorias/atualizar`}>
+                      <Link to={`/categorias/atualizar/${item.id}`}>
                         <PencilRuler
                           size={20}
                           className="text-yellow-700 dark:text-yellow-400 cursor-pointer"
