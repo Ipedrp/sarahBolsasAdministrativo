@@ -1,0 +1,96 @@
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
+import { apiPrivate } from "@/server/api";
+import type { Produto } from "@/types/Product";
+import type { ProductFormData } from "@/schemas/ProductSchema";
+import axios from "axios";
+
+interface ProductContextData {
+  produtos: Produto[];
+  listarProdutos: () => Promise<void>;
+  criarProduto: (data: ProductFormData) => Promise<void>;
+  loading: boolean;
+  error: string | null;
+}
+
+const ProductContext = createContext({} as ProductContextData);
+
+export function ProductProvider({ children }: { children: ReactNode }) {
+  const [produtos, setProdutos] = useState<Produto[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function listarProdutos() {
+    try {
+      setLoading(true);
+      const response = await apiPrivate.get<Produto[]>("/product/all");
+      setProdutos(response.data);
+    } catch (err) {
+      setError("Erro ao listar produtos");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function criarProduto(data: ProductFormData) {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const formData = new FormData();
+
+      Object.entries(data).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          if (key === "img_externa" || key === "img_interna") {
+            Array.from(value as FileList).forEach((file) =>
+              formData.append(key, file)
+            );
+          } else {
+            formData.append(key, String(value));
+          }
+        }
+      });
+
+      await apiPrivate.post("/product/newProduct", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      await listarProdutos();
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.message || "Erro ao criar produto");
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    listarProdutos();
+  }, []);
+
+  return (
+    <ProductContext.Provider
+      value={{
+        produtos,
+        listarProdutos,
+        criarProduto,
+        loading,
+        error,
+      }}
+    >
+      {children}
+    </ProductContext.Provider>
+  );
+}
+
+export function useProduct() {
+  return useContext(ProductContext);
+}
