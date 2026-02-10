@@ -22,10 +22,18 @@ import { productSchema } from "@/schemas/ProductSchema";
 import { useProduct } from "@/contexts/ProductContext";
 import { z } from "zod";
 
+import { useCategoria } from "@/contexts/CategoryContext";
+import { useSubCategoria } from "@/contexts/SubcategoryContext";
+import type { SubCategoria } from "@/types/SubCategory";
+
+
 type ProductFormData = z.infer<typeof productSchema>;
 
 export function AddProduct() {
   const { criarProduto, loading } = useProduct();
+  const { getAllCategorias, categorias } = useCategoria();
+  const { getAllSubCategorias, subCategorias } = useSubCategoria();
+
 
   const [open, setOpen] = useState(false);
   const [openSubcategory, setOpenSubcategory] = useState(false);
@@ -47,7 +55,21 @@ export function AddProduct() {
     },
   });
 
+  useEffect(() => {
+    getAllCategorias();
+    getAllSubCategorias();
+  }, []);
+
+  const categoriaSelecionada = watch("id_categoria");
+
+  useEffect(() => {
+    setValue("id_subcategoria", "");
+  }, [categoriaSelecionada]);
+
+
+
   const emPromocao = watch("emPromocao");
+
 
   useEffect(() => {
     if (emPromocao) {
@@ -155,16 +177,63 @@ export function AddProduct() {
 
           {/* Categoria / Subcategoria */}
 
-          <Label>Categoria</Label>
-          <Input
-            placeholder="ID da categoria"
-            {...register("id_categoria")}
-          />
-          <Label>Subcategoria</Label>
-          <Input
-            placeholder="ID da subcategoria"
-            {...register("id_subcategoria")}
-          />
+          {/* Categoria */}
+          <div>
+            <Label>Categoria</Label>
+
+            <select
+              className="block w-full px-3 py-2.5 rounded-md border text-sm mb-1"
+              {...register("id_categoria")}
+            >
+              <option value="">Selecione uma categoria</option>
+
+              {categorias.map((categoria) => (
+                <option key={categoria.id} value={categoria.id}>
+                  {categoria.nome}
+                </option>
+              ))}
+            </select>
+
+            {errors.id_categoria && (
+              <p className="text-red-500 text-xs">
+                {errors.id_categoria.message}
+              </p>
+            )}
+          </div>
+
+          {/* Subcategoria */}
+          <div>
+            <Label>Subcategoria</Label>
+
+            <select
+              className="block w-full px-3 py-2.5 rounded-md border text-sm mb-1"
+              {...register("id_subcategoria")}
+              disabled={!categoriaSelecionada}
+            >
+              <option value="">
+                {categoriaSelecionada
+                  ? "Selecione uma subcategoria"
+                  : "Selecione uma categoria primeiro"}
+              </option>
+
+              {subCategorias
+                .filter(
+                  (sub: SubCategoria) => sub.categoriaId === categoriaSelecionada
+                )
+                .map((sub: SubCategoria) => (
+                  <option key={sub.id} value={sub.id}>
+                    {sub.nome}
+                  </option>
+                ))}
+            </select>
+
+            {errors.id_subcategoria && (
+              <p className="text-red-500 text-xs">
+                {errors.id_subcategoria.message}
+              </p>
+            )}
+          </div>
+
 
           {/* Imagens */}
           <div>
