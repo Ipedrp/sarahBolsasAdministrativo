@@ -16,7 +16,8 @@ interface ProductContextData {
   criarProduto: (data: ProductFormData) => Promise<void>;
   deletarProduto: (id: string) => Promise<void>;
   loading: boolean;
-  error: string | null;
+  errorMessage: string | null;
+  clearError: () => void;
 }
 
 const ProductContext = createContext({} as ProductContextData);
@@ -24,7 +25,7 @@ const ProductContext = createContext({} as ProductContextData);
 export function ProductProvider({ children }: { children: ReactNode }) {
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   async function listarProdutos() {
     try {
@@ -32,7 +33,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       const response = await apiPrivate.get<Produto[]>("/product/all");
       setProdutos(response.data);
     } catch (err) {
-      setError("Erro ao listar produtos");
+      setErrorMessage("Erro ao listar produtos");
     } finally {
       setLoading(false);
     }
@@ -41,7 +42,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   async function criarProduto(data: ProductFormData) {
     try {
       setLoading(true);
-      setError(null);
+      setErrorMessage(null);
 
       const formData = new FormData();
 
@@ -66,7 +67,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       await listarProdutos();
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        setError(err.response?.data?.message || "Erro ao criar produto");
+        setErrorMessage(err.response?.data?.message || "Erro ao criar produto");
       }
     } finally {
       setLoading(false);
@@ -83,11 +84,11 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       );
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        setError(
+        setErrorMessage(
           error.response?.data?.message || "Erro ao deletar Produto"
         );
       } else {
-        setError("Erro inesperado");
+        setErrorMessage("Erro inesperado");
       }
 
       throw error;
@@ -96,10 +97,14 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     }
   }
 
-
   useEffect(() => {
     listarProdutos();
   }, []);
+
+
+  function clearError() {
+    setErrorMessage(null);
+  }
 
   return (
     <ProductContext.Provider
@@ -109,7 +114,8 @@ export function ProductProvider({ children }: { children: ReactNode }) {
         criarProduto,
         deletarProduto,
         loading,
-        error,
+        errorMessage,
+        clearError
       }}
     >
       {children}

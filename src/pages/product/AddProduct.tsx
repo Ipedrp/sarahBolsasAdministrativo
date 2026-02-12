@@ -26,17 +26,20 @@ import { useCategoria } from "@/contexts/CategoryContext";
 import { useSubCategoria } from "@/contexts/SubcategoryContext";
 import type { SubCategoria } from "@/types/SubCategory";
 
+import { Sucess } from "@/components/notification/Sucess";
+import { Error } from "@/components/notification/Error";
 
 type ProductFormData = z.infer<typeof productSchema>;
 
 export function AddProduct() {
-  const { criarProduto, loading } = useProduct();
+  const { criarProduto, loading,errorMessage, clearError } = useProduct();
   const { getAllCategorias, categorias } = useCategoria();
   const { getAllSubCategorias, subCategorias } = useSubCategoria();
 
-
   const [open, setOpen] = useState(false);
   const [openSubcategory, setOpenSubcategory] = useState(false);
+
+  const [successOpen, setSuccessOpen] = useState(false);
 
   const radioId = useId();
 
@@ -87,6 +90,8 @@ export function AddProduct() {
     try {
       await criarProduto(data);
       console.log("✅ Produto cadastrado com sucesso");
+      setSuccessOpen(true)
+
     } catch (err) {
       console.error("❌ Erro ao cadastrar produto", err);
     }
@@ -287,6 +292,18 @@ export function AddProduct() {
             {loading ? "Salvando..." : "Cadastrar"}
           </Button>
         </form>
+
+        <Sucess
+          active={successOpen}
+          onClose={() => setSuccessOpen(false)}
+          text="Produto cadastrado com sucesso!"
+        />
+
+        <Error
+          active={!!errorMessage}
+          onClose={clearError}
+          text={errorMessage ?? ""}
+        />
       </main>
 
       {/* Dialogs */}
