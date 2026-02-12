@@ -14,6 +14,7 @@ interface ProductContextData {
   produtos: Produto[];
   listarProdutos: () => Promise<void>;
   criarProduto: (data: ProductFormData) => Promise<void>;
+  deletarProduto: (id: string) => Promise<void>;
   loading: boolean;
   error: string | null;
 }
@@ -72,6 +73,30 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  async function deletarProduto(id: string) {
+    try {
+      setLoading(true);
+      await apiPrivate.delete(`/product/${id}`);
+
+      setProdutos((prev) =>
+        prev.filter((sub) => sub.id !== id)
+      );
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        setError(
+          error.response?.data?.message || "Erro ao deletar Produto"
+        );
+      } else {
+        setError("Erro inesperado");
+      }
+
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+
   useEffect(() => {
     listarProdutos();
   }, []);
@@ -82,6 +107,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
         produtos,
         listarProdutos,
         criarProduto,
+        deletarProduto,
         loading,
         error,
       }}

@@ -30,7 +30,7 @@ import { useEffect } from "react";
 // ---- Componente ----
 export function ListProduct() {
 
-    const { produtos, listarProdutos, loading, error } = useProduct();
+    const { produtos, listarProdutos, deletarProduto, loading, error } = useProduct();
 
     const [page, setPage] = useState(1);
 
@@ -56,6 +56,14 @@ export function ListProduct() {
     const prevPage = () => {
         if (page > 1) setPage(page - 1);
     };
+
+    async function handleDelete(id: string) {
+        try {
+            await deletarProduto(id);
+        } catch {
+            // erro já tratado no contexto
+        }
+    }
 
     useEffect(() => {
         listarProdutos();
@@ -177,10 +185,12 @@ export function ListProduct() {
                                                     />
                                                 </Link>
 
-                                                <Trash2
-                                                    size={20}
-                                                    className="text-red-800 cursor-pointer"
-                                                />
+                                                <button onClick={() => handleDelete(item.id)}>
+                                                    <Trash2
+                                                        size={20}
+                                                        className="text-red-800 cursor-pointer"
+                                                    />
+                                                </button>
                                             </div>
                                         </TableCell>
                                     </TableRow>
