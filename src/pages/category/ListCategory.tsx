@@ -13,6 +13,8 @@ import { useState } from "react";
 import { Link } from "react-router";
 import { useEffect } from "react";
 import { useCategoria } from "@/contexts/CategoryContext";
+import { Sucess } from "@/components/notification/Sucess";
+import { Error } from "@/components/notification/Error";
 
 // ---- Dados estáticos (apenas nome e descrição) ----
 // const categoriasFake = Array.from({ length: 23 }, (_, i) => ({
@@ -24,8 +26,9 @@ import { useCategoria } from "@/contexts/CategoryContext";
 // ---- Componente ----
 export function ListCategory() {
 
-  const { getAllCategorias, categorias, deletarCategoria, loading, errorMessage } = useCategoria();
+  const { getAllCategorias, categorias, deletarCategoria, loading, errorMessage, clearError } = useCategoria();
 
+  const [successOpen, setSuccessOpen] = useState(false);
 
   const [page, setPage] = useState(1);
   const itemsPerPage = 5;
@@ -54,7 +57,12 @@ export function ListCategory() {
 
   async function handleDelete(id: string) {
     try {
+      clearError(); // limpa erro anterior
+
       await deletarCategoria(id);
+
+      setSuccessOpen(true);
+
     } catch {
       // erro já tratado no contexto
     }
@@ -150,6 +158,18 @@ export function ListCategory() {
             </Button>
           </div>
         </div>
+
+        <Sucess
+          active={successOpen}
+          onClose={() => setSuccessOpen(false)}
+          text="Categoria excluída com sucesso!"
+        />
+
+        <Error
+          active={!!errorMessage}
+          onClose={clearError}
+          text={errorMessage ?? ""}
+        />
       </main>
     </section>
   );

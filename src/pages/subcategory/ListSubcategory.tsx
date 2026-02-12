@@ -13,6 +13,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { useSubCategoria } from "@/contexts/SubcategoryContext";
 import { useCategoria } from "@/contexts/CategoryContext";
+import { Sucess } from "@/components/notification/Sucess";
+import { Error } from "@/components/notification/Error";
 
 // ---- Dados estáticos (apenas nome e descrição) ----
 // const categoriasFake = Array.from({ length: 23 }, (_, i) => ({
@@ -24,8 +26,10 @@ import { useCategoria } from "@/contexts/CategoryContext";
 // ---- Componente ----
 export function ListSubcategory() {
 
-  const { getAllSubCategorias, loading, subCategorias, deletarSubCategoria } = useSubCategoria();
+  const { getAllSubCategorias, loading, subCategorias, deletarSubCategoria, errorMessage, clearError } = useSubCategoria();
   const { getAllCategorias, categorias } = useCategoria();
+
+  const [successOpen, setSuccessOpen] = useState(false);
 
   const [page, setPage] = useState(1);
   const itemsPerPage = 5;
@@ -67,11 +71,17 @@ export function ListSubcategory() {
 
   async function handleDelete(id: string) {
     try {
+      clearError(); // limpa erro anterior
+
       await deletarSubCategoria(id);
+
+      setSuccessOpen(true);
+
     } catch {
-      // erro já tratado no contexto
+      // erro tratado no contexto
     }
   }
+
 
   return (
     <section className="flex flex-col gap-6">
@@ -159,6 +169,18 @@ export function ListSubcategory() {
             </Button>
           </div>
         </div>
+
+        <Sucess
+          active={successOpen}
+          onClose={() => setSuccessOpen(false)}
+          text="Subcategoria excluída com sucesso!"
+        />
+
+        <Error
+          active={!!errorMessage}
+          onClose={clearError}
+          text={errorMessage ?? ""}
+        />
       </main>
     </section>
   );
