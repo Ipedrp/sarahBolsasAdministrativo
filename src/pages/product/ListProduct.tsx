@@ -30,7 +30,7 @@ import { useEffect } from "react";
 // ---- Componente ----
 export function ListProduct() {
 
-    const { produtos, listarProdutos, deletarProduto, loading, error } = useProduct();
+    const { produtos, listarProdutos, deletarProduto, loading, errorMessage } = useProduct();
 
     const [page, setPage] = useState(1);
 
@@ -101,7 +101,8 @@ export function ListProduct() {
                             <TableRow>
                                 <TableHead className="w-[100px]">Nome</TableHead>
                                 <TableHead>Preço</TableHead>
-                                <TableHead>Descrição</TableHead>
+                                <TableHead>Categoria</TableHead>
+                                <TableHead>Subcategoria</TableHead>
                                 <TableHead>Medidas</TableHead>
                                 <TableHead>Promoção</TableHead>
                                 <TableHead>Preço Promoção</TableHead>
@@ -118,16 +119,16 @@ export function ListProduct() {
                                 </TableRow>
                             )}
 
-                            {error && (
+                            {errorMessage && (
                                 <TableRow>
                                     <TableCell colSpan={8} className="text-center text-red-500">
-                                        {error}
+                                        {errorMessage}
                                     </TableCell>
                                 </TableRow>
                             )}
 
                             {!loading &&
-                                !error &&
+                                !errorMessage &&
                                 currentItems.map((item) => (
                                     <TableRow key={item.id}>
                                         {/* Nome */}
@@ -140,9 +141,14 @@ export function ListProduct() {
                                             R$ {item.preco.toFixed(2)}
                                         </TableCell>
 
-                                        {/* Descrição */}
-                                        <TableCell className="max-w-[250px] truncate">
-                                            {item.descricao}
+                                        {/* Categoria */}
+                                        <TableCell className="max-w-[225px] truncate">
+                                            {item.categoriaId}
+                                        </TableCell>
+
+                                        {/* Subcategoria */}
+                                        <TableCell className="max-w-[225px] truncate">
+                                            {item.subcategoriaId}
                                         </TableCell>
 
                                         {/* Medidas */}

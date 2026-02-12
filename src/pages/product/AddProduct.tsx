@@ -32,7 +32,7 @@ import { Error } from "@/components/notification/Error";
 type ProductFormData = z.infer<typeof productSchema>;
 
 export function AddProduct() {
-  const { criarProduto, loading,errorMessage, clearError } = useProduct();
+  const { criarProduto, loading, errorMessage, clearError } = useProduct();
   const { getAllCategorias, categorias } = useCategoria();
   const { getAllSubCategorias, subCategorias } = useSubCategoria();
 
@@ -50,6 +50,7 @@ export function AddProduct() {
     setValue,
     setFocus,
     formState: { errors },
+    reset,
   } = useForm({
     resolver: zodResolver(productSchema),
     defaultValues: {
@@ -91,6 +92,8 @@ export function AddProduct() {
       await criarProduto(data);
       console.log("✅ Produto cadastrado com sucesso");
       setSuccessOpen(true)
+      reset();
+
 
     } catch (err) {
       console.error("❌ Erro ao cadastrar produto", err);
