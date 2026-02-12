@@ -35,17 +35,17 @@ export default function DialogAddCategory({ open, onOpenChange }: DialogAddCateg
     resolver: zodResolver(categoriaSchema),
   });
 
-
   async function onSubmit(data: CategoryFormData) {
     try {
       await criarCategoria(data);
+
       setSuccessOpen(true);
       reset();
       clearError();
       onOpenChange(false);
 
     } catch {
-      // erro já foi tratado no contexto
+      // erro tratado no contexto
     }
   }
 
@@ -61,57 +61,88 @@ export default function DialogAddCategory({ open, onOpenChange }: DialogAddCateg
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="dark:bg-gray-900">
-        <div className="flex flex-col items-center gap-2 dark:bg-gray-900">
-          <DialogHeader>
-            <DialogTitle className="sm:text-center">
-              Adicionar Categoria
-            </DialogTitle>
-          </DialogHeader>
-        </div>
 
-        <form className="space-y-5 w-full" onSubmit={handleSubmit(onSubmit)}>
+        <DialogHeader>
+          <DialogTitle className="text-center">
+            Adicionar Categoria
+          </DialogTitle>
+        </DialogHeader>
+
+        <form
+          className="space-y-5 w-full"
+          onSubmit={handleSubmit(onSubmit)}
+        >
           <div className="space-y-4">
+
+            {/* Nome */}
             <div>
               <Label>Nome</Label>
-              <Input className="mb-1" {...register("nome")} />
-              {errors.nome && <span className="text-red-600 dark:text-red-800  text-sm">{errors.nome.message}</span>}
+
+              <Input
+                className="mb-1"
+                {...register("nome")}
+              />
+
+              {errors.nome && (
+                <span className="text-red-600 text-sm">
+                  {errors.nome.message}
+                </span>
+              )}
             </div>
+
+            {/* Tipo */}
             <div>
               <Label>Tipo</Label>
-              <select className="block w-full px-3 py-2.5 rounded-md
-    bg-neutral-secondary-medium
-    dark:bg-gray-500/50
-    border border-default-medium
-    dark:border-gray-100/20
-    text-heading
-    dark:text-white
-    text-sm rounded-base
-    placeholder:text-body
-    dark:placeholder:text-red-400 mb-1" {...register("tipo_categoria")}>
+
+              <select
+                className="block w-full px-3 py-2.5 rounded-md
+                bg-neutral-secondary-medium
+                dark:bg-gray-500/50
+                border border-default-medium
+                dark:border-gray-100/20
+                text-heading
+                dark:text-white
+                text-sm
+                mb-1"
+                {...register("tipo")}
+              >
                 <option value="">Selecione</option>
                 <option value="MASCULINA">Masculina</option>
                 <option value="FEMININA">Feminina</option>
               </select>
-              {errors.tipo_categoria && <span className="text-red-600 dark:text-red-800 text-sm">{errors.tipo_categoria.message}</span>}
+
+              {errors.tipo && (
+                <span className="text-red-600 text-sm">
+                  {errors.tipo.message}
+                </span>
+              )}
             </div>
+
           </div>
 
-          <Button type="submit" className="w-full bg-red-900 dark:text-white dark:hover:text-black cursor-pointer" disabled={isSubmitting}>
+          <Button
+            type="submit"
+            className="w-full bg-red-900 dark:text-white"
+            disabled={isSubmitting}
+          >
             Cadastrar
           </Button>
         </form>
-      </DialogContent>
-      <Sucess
-        active={successOpen}
-        onClose={() => setSuccessOpen(false)}
-        text="Categoria cadastrada com sucesso!"
-      />
 
-      <Error
-        active={!!errorMessage}
-        onClose={clearError}
-        text={errorMessage ?? ""}
-      />
+        <Sucess
+          active={successOpen}
+          onClose={() => setSuccessOpen(false)}
+          text="Categoria cadastrada com sucesso!"
+        />
+
+        <Error
+          active={!!errorMessage}
+          onClose={clearError}
+          text={errorMessage ?? ""}
+        />
+
+      </DialogContent>
     </Dialog>
   );
 }
+
