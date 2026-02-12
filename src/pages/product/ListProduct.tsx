@@ -11,33 +11,43 @@ import {
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Link } from "react-router";
+import { useProduct } from "@/contexts/ProductContext";
+import { useEffect } from "react";
+
 
 // ---- Dados estáticos ----
-const produtosFake = Array.from({ length: 23 }, (_, i) => ({
-    id: i + 1,
-    nome: `Produto ${i + 1}`,
-    preco: (Math.random() * 100).toFixed(2),
-    descricao: "Produto de teste",
-    medidas: "10x20",
-    promocao: i % 2 === 0 ? "Sim" : "Não",
-    precoPromocao: (Math.random() * 50).toFixed(2),
-    imagens: "img.jpg",
-}));
+// const produtosFake = Array.from({ length: 23 }, (_, i) => ({
+//     id: i + 1,
+//     nome: `Produto ${i + 1}`,
+//     preco: (Math.random() * 100).toFixed(2),
+//     descricao: "Produto de teste",
+//     medidas: "10x20",
+//     promocao: i % 2 === 0 ? "Sim" : "Não",
+//     precoPromocao: (Math.random() * 50).toFixed(2),
+//     imagens: "img.jpg",
+// }));
 
 // ---- Componente ----
 export function ListProduct() {
+
+    const { produtos, listarProdutos, loading, error } = useProduct();
+
     const [page, setPage] = useState(1);
+
     const itemsPerPage = 5;
 
     const startIndex = (page - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
 
-    const currentItems = produtosFake.slice(startIndex, endIndex);
-    const totalPages = Math.ceil(produtosFake.length / itemsPerPage);
+    const currentItems = produtos.slice(startIndex, endIndex);
+
+    const totalPages = Math.ceil(produtos.length / itemsPerPage);
+
     const remainingItems =
-        produtosFake.length - endIndex > 0
-            ? produtosFake.length - endIndex
+        produtos.length - endIndex > 0
+            ? produtos.length - endIndex
             : 0;
+
 
     const nextPage = () => {
         if (page < totalPages) setPage(page + 1);
@@ -46,6 +56,11 @@ export function ListProduct() {
     const prevPage = () => {
         if (page > 1) setPage(page - 1);
     };
+
+    useEffect(() => {
+        listarProdutos();
+    }, []);
+
 
     return (
         <section className="flex flex-col gap-6">
@@ -87,32 +102,91 @@ export function ListProduct() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {currentItems.map((item) => (
-                                <TableRow key={item.id}>
-                                    <TableCell className="font-medium">{item.nome}</TableCell>
-                                    <TableCell>R$ {item.preco}</TableCell>
-                                    <TableCell>{item.descricao}</TableCell>
-                                    <TableCell>{item.medidas}</TableCell>
-                                    <TableCell>{item.promocao}</TableCell>
-                                    <TableCell>R$ {item.precoPromocao}</TableCell>
-                                    <TableCell>{item.imagens}</TableCell>
-                                    <TableCell className="text-right ">
-                                        <div className="flex justify-end gap-3">
-                                            <Link to={"/produtos/atualizar"}>
-                                                <PencilRuler
-                                                    size={20}
-                                                    className="text-yellow-700 dark:text-yellow-400 cursor-pointer"
-                                                />
-                                            </Link>
-                                            <Trash2
-                                                size={20}
-                                                className="text-red-800 dark:text-red-600 cursor-pointer"
-                                            />
-                                        </div>
+                            {loading && (
+                                <TableRow>
+                                    <TableCell colSpan={8} className="text-center">
+                                        Carregando...
                                     </TableCell>
                                 </TableRow>
-                            ))}
+                            )}
+
+                            {error && (
+                                <TableRow>
+                                    <TableCell colSpan={8} className="text-center text-red-500">
+                                        {error}
+                                    </TableCell>
+                                </TableRow>
+                            )}
+
+                            {!loading &&
+                                !error &&
+                                currentItems.map((item) => (
+                                    <TableRow key={item.id}>
+                                        {/* Nome */}
+                                        <TableCell className="font-medium">
+                                            {item.nome}
+                                        </TableCell>
+
+                                        {/* Preço */}
+                                        <TableCell>
+                                            R$ {item.preco.toFixed(2)}
+                                        </TableCell>
+
+                                        {/* Descrição */}
+                                        <TableCell className="max-w-[250px] truncate">
+                                            {item.descricao}
+                                        </TableCell>
+
+                                        {/* Medidas */}
+                                        <TableCell>
+                                            {item.largura}x{item.altura}
+                                        </TableCell>
+
+                                        {/* Promoção */}
+                                        <TableCell>
+                                            {item.emPromocao ? "Sim" : "Não"}
+                                        </TableCell>
+
+                                        {/* Preço Promo */}
+                                        <TableCell>
+                                            {item.precoPromocional
+                                                ? `R$ ${item.precoPromocional.toFixed(2)}`
+                                                : "-"}
+                                        </TableCell>
+
+                                        {/* Imagem */}
+                                        <TableCell>
+                                            {item.imagemExterna?.length > 0 ? (
+                                                <img
+                                                    src={item.imagemExterna[0]}
+                                                    alt={item.nome}
+                                                    className="w-12 h-12 object-cover rounded"
+                                                />
+                                            ) : (
+                                                "Sem imagem"
+                                            )}
+                                        </TableCell>
+
+                                        {/* Ações */}
+                                        <TableCell className="text-right">
+                                            <div className="flex justify-end gap-3">
+                                                <Link to={`/produtos/atualizar/${item.id}`}>
+                                                    <PencilRuler
+                                                        size={20}
+                                                        className="text-yellow-700 cursor-pointer"
+                                                    />
+                                                </Link>
+
+                                                <Trash2
+                                                    size={20}
+                                                    className="text-red-800 cursor-pointer"
+                                                />
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
                         </TableBody>
+
                     </Table>
                 </div>
 
