@@ -31,18 +31,31 @@ export function ListSubcategory() {
 
   const [successOpen, setSuccessOpen] = useState(false);
 
+  const [search, setSearch] = useState("");
+
+  const filteredSubCategorias = subCategorias.filter((sub) =>
+    sub.nome.toLowerCase().includes(search.toLowerCase())
+  );
+
+
+
   const [page, setPage] = useState(1);
   const itemsPerPage = 5;
 
   const startIndex = (page - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
 
-  const currentItems = subCategorias.slice(startIndex, endIndex);
-  const totalPages = Math.ceil(subCategorias.length / itemsPerPage);
+  const currentItems = filteredSubCategorias.slice(startIndex, endIndex);
+
+  const totalPages = Math.ceil(
+    filteredSubCategorias.length / itemsPerPage
+  );
+
   const remainingItems =
-    subCategorias.length - endIndex > 0
-      ? subCategorias.length - endIndex
+    filteredSubCategorias.length - endIndex > 0
+      ? filteredSubCategorias.length - endIndex
       : 0;
+
 
   const nextPage = () => {
     if (page < totalPages) setPage(page + 1);
@@ -97,8 +110,14 @@ export function ListSubcategory() {
         <div className="relative sm:w-100 w-full">
           <Input
             className="peer ps-9"
-            placeholder="Digite o nome da categoria Ex: Carteira"
+            placeholder="Digite o nome da subcategoria Ex: Carteira"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1); // volta pra página 1 ao pesquisar
+            }}
           />
+
           <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3">
             <Search size={20} aria-hidden="true" />
           </div>

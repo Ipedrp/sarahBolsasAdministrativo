@@ -32,6 +32,12 @@ export function ListProduct() {
 
     const { produtos, listarProdutos, deletarProduto, loading, errorMessage } = useProduct();
 
+    const [search, setSearch] = useState("");
+
+    const filteredProdutos = produtos.filter((prod) =>
+        prod.nome.toLowerCase().includes(search.toLowerCase())
+    );
+
     const [page, setPage] = useState(1);
 
     const itemsPerPage = 5;
@@ -39,14 +45,17 @@ export function ListProduct() {
     const startIndex = (page - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
 
-    const currentItems = produtos.slice(startIndex, endIndex);
+    const currentItems = filteredProdutos.slice(startIndex, endIndex);
 
-    const totalPages = Math.ceil(produtos.length / itemsPerPage);
+    const totalPages = Math.ceil(
+        filteredProdutos.length / itemsPerPage
+    );
 
     const remainingItems =
-        produtos.length - endIndex > 0
-            ? produtos.length - endIndex
+        filteredProdutos.length - endIndex > 0
+            ? filteredProdutos.length - endIndex
             : 0;
+
 
 
     const nextPage = () => {
@@ -84,8 +93,14 @@ export function ListProduct() {
                 <div className="relative sm:w-100 w-full">
                     <Input
                         className="peer ps-9"
-                        placeholder="Digite o nome do produto  Ex: Carteira "
+                        placeholder="Digite o nome do produto Ex: Carteira"
+                        value={search}
+                        onChange={(e) => {
+                            setSearch(e.target.value);
+                            setPage(1); // volta para página 1 ao pesquisar
+                        }}
                     />
+
                     <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3">
                         <Search size={20} aria-hidden="true" />
                     </div>

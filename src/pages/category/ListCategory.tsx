@@ -30,18 +30,29 @@ export function ListCategory() {
 
   const [successOpen, setSuccessOpen] = useState(false);
 
+  const [search, setSearch] = useState("");
+
+  const filteredCategorias = categorias.filter((cat) =>
+    cat.nome.toLowerCase().includes(search.toLowerCase())
+  );
+
   const [page, setPage] = useState(1);
   const itemsPerPage = 5;
 
   const startIndex = (page - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
 
-  const currentItems = categorias.slice(startIndex, endIndex);
-  const totalPages = Math.ceil(categorias.length / itemsPerPage);
+  const currentItems = filteredCategorias.slice(startIndex, endIndex);
+
+  const totalPages = Math.ceil(
+    filteredCategorias.length / itemsPerPage
+  );
+
   const remainingItems =
-    categorias.length - endIndex > 0
-      ? categorias.length - endIndex
+    filteredCategorias.length - endIndex > 0
+      ? filteredCategorias.length - endIndex
       : 0;
+
 
   const nextPage = () => {
     if (page < totalPages) setPage(page + 1);
@@ -87,7 +98,13 @@ export function ListCategory() {
           <Input
             className="peer ps-9"
             placeholder="Digite o nome da categoria Ex: Carteira"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1); // volta pra página 1 ao pesquisar
+            }}
           />
+
           <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3">
             <Search size={20} aria-hidden="true" />
           </div>
