@@ -158,12 +158,12 @@ export function ListProduct() {
 
                                         {/* Categoria */}
                                         <TableCell className="max-w-[225px] truncate">
-                                            {item.categoriaId}
+                                            {item.categoria?.nome ?? "Sem categoria"}
                                         </TableCell>
 
                                         {/* Subcategoria */}
                                         <TableCell className="max-w-[225px] truncate">
-                                            {item.subcategoriaId}
+                                            {item.subcategoria?.nome ?? "Sem subcategoria"}
                                         </TableCell>
 
                                         {/* Medidas */}
