@@ -13,9 +13,11 @@ import { useState } from "react";
 import { Link } from "react-router";
 import { useProduct } from "@/contexts/ProductContext";
 import { useEffect } from "react";
+import { Sucess } from "@/components/notification/Sucess";
+import { Error } from "@/components/notification/Error";
 
 
-// ---- Dados estáticos ----
+// ---- Dados estáticos ----|AZSxcf
 // const produtosFake = Array.from({ length: 23 }, (_, i) => ({
 //     id: i + 1,
 //     nome: `Produto ${i + 1}`,
@@ -30,7 +32,9 @@ import { useEffect } from "react";
 // ---- Componente ----
 export function ListProduct() {
 
-    const { produtos, listarProdutos, deletarProduto, loading, errorMessage } = useProduct();
+    const { produtos, listarProdutos, inativoProduto, loading, errorMessage, clearError } = useProduct();
+
+    const [successOpen, setSuccessOpen] = useState(false);
 
     const [search, setSearch] = useState("");
 
@@ -68,7 +72,12 @@ export function ListProduct() {
 
     async function handleDelete(id: string) {
         try {
-            await deletarProduto(id);
+            clearError();
+
+            await inativoProduto(id);
+
+            setSuccessOpen(true);
+
         } catch {
             // erro já tratado no contexto
         }
@@ -244,6 +253,17 @@ export function ListProduct() {
                         </Button>
                     </div>
                 </div>
+                <Sucess
+                    active={successOpen}
+                    onClose={() => setSuccessOpen(false)}
+                    text="Produto excluído com sucesso!"
+                />
+
+                <Error
+                    active={!!errorMessage}
+                    onClose={clearError}
+                    text={errorMessage ?? ""}
+                />
             </main>
         </section>
     );

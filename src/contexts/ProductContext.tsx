@@ -14,7 +14,7 @@ interface ProductContextData {
   produtos: Produto[];
   listarProdutos: () => Promise<void>;
   criarProduto: (data: ProductFormData) => Promise<void>;
-  deletarProduto: (id: string) => Promise<void>;
+  inativoProduto: (id: string) => Promise<void>;
   loading: boolean;
   errorMessage: string | null;
   clearError: () => void;
@@ -74,10 +74,10 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  async function deletarProduto(id: string) {
+  async function inativoProduto(id: string) {
     try {
       setLoading(true);
-      await apiPrivate.delete(`/product/${id}`);
+      await apiPrivate.put(`/product/inat/${id}`);
 
       setProdutos((prev) =>
         prev.filter((sub) => sub.id !== id)
@@ -112,7 +112,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
         produtos,
         listarProdutos,
         criarProduto,
-        deletarProduto,
+        inativoProduto,
         loading,
         errorMessage,
         clearError
