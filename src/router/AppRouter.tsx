@@ -24,7 +24,7 @@ export function AppRouter() {
                     <Route path="/inicio" element={<Initial />} />
                     <Route path="/produtos" element={<ListProduct />} />
                     <Route path="/produtos/adicionar" element={<AddProduct />} />
-                    <Route path="/produtos/atualizar" element={<UpdateProduct />} />
+                    <Route path="/produtos/atualizar/:id" element={<UpdateProduct />} />
                     <Route path="/categorias" element={<ListCategory />} />
                     <Route path="/categorias/adicionar" element={<AddCategory />} />
                     <Route path="/categorias/atualizar/:id" element={<UpdateCategory />} />

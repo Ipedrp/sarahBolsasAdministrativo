@@ -1,187 +1,275 @@
-import { useEffect, useId, useRef, useState } from "react"
-import DialogAddCategory from "@/components/dialog/DialogAddCategory";
-import { ArrowLeft, ChartColumnStacked } from "lucide-react";
-import { Link } from "react-router";
+import { useEffect, useId, useState } from "react";
+import { Link, useParams } from "react-router";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { ArrowLeft, ChartColumnStacked, Trash2 } from "lucide-react";
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 
+import DialogAddCategory from "@/components/dialog/DialogAddCategory";
+
+import {
+  updateProductSchema,
+  type UpdateProductFormData,
+} from "@/schemas/ProductSchema";
+
+import { useProduct } from "@/contexts/ProductContext";
+import { useCategoria } from "@/contexts/CategoryContext";
+import { useSubCategoria } from "@/contexts/SubcategoryContext";
+import type { SubCategoria } from "@/types/SubCategory";
 
 export function UpdateProduct() {
+  const { id } = useParams();
+  const { atualizarProduto, getProdutoById, loading } = useProduct();
+  const { getAllCategorias, categorias } = useCategoria();
+  const { getAllSubCategorias, subCategorias } = useSubCategoria();
 
-    const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
-    const radioId = useId()
-    const inputId = useId()
-    const [selectedValue, setSelectedValue] = useState("without-expansion")
-    const inputRef = useRef<HTMLInputElement>(null)
+  const [imagensExternasAtuais, setImagensExternasAtuais] = useState<string[]>([]);
+  const [imagensInternasAtuais, setImagensInternasAtuais] = useState<string[]>([]);
 
-    useEffect(() => {
-        if (selectedValue === "with-expansion" && inputRef.current) {
-            inputRef.current.focus()
-        }
-    }, [selectedValue])
+  const [removerExternas, setRemoverExternas] = useState<string[]>([]);
+  const [removerInternas, setRemoverInternas] = useState<string[]>([]);
 
+  const radioId = useId();
 
-    return (
-        <section className="flex flex-col gap-2 bg-gray-100/20 p-2  border-2 rounded-2xl">
-            {/* Header */}
-            <header >
-                <div className="flex items-center justify-between gap-1 cursor-pointer">
-                    <Link to={"/produtos"}>
-                        <ArrowLeft size={22} className="text-muted-foreground/80" />
-                    </Link>
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    setFocus,
+    formState: { errors },
+    reset,
+  } = useForm({
+    resolver: zodResolver(updateProductSchema),
+    defaultValues: {
+      emPromocao: false,
+      alertar_estoque: true,
+    },
+  });
+  /* =========================
+     Carregar Produto
+  ========================= */
 
-                    {/* Ícone que abre o Dialog */}
-                    <ChartColumnStacked
-                        size={22}
-                        className="text-muted-foreground/80 cursor-pointer"
-                        onClick={() => setOpen(true)}
-                    />
+  useEffect(() => {
+    getAllCategorias();
+    getAllSubCategorias();
+  }, []);
+
+  useEffect(() => {
+    async function loadData() {
+      if (!id) return;
+
+      const produto = await getProdutoById(id);
+
+      reset({
+        nome: produto.nome,
+        preco: produto.preco,
+        largura: produto.largura,
+        altura: produto.altura,
+        peso: produto.peso ?? undefined,
+        profundidade: produto.profundidade ?? undefined,
+        descricao: produto.descricao ?? "",
+        emPromocao: produto.emPromocao,
+        precoPromocional: produto.precoPromocional ?? undefined,
+        estoque: produto.estoque.quantidade,
+        quantidade_minima_estoque: produto.estoque.quantidadeMinima,
+        alertar_estoque: produto.estoque.alertaMinimo,
+        unidade_medida: produto.estoque.unidade,
+        id_categoria: produto.categoriaId,
+        id_subcategoria: produto.subcategoriaId,
+      });
+
+      setImagensExternasAtuais(produto.imagemExterna);
+      setImagensInternasAtuais(produto.imagemInterna);
+    }
+
+    loadData();
+  }, [id, reset]);
+
+  const categoriaSelecionada = watch("id_categoria");
+  const emPromocao = watch("emPromocao");
+
+  /* =========================
+     Remover imagens
+  ========================= */
+
+  function removerImagemExterna(url: string) {
+    setImagensExternasAtuais((prev) => prev.filter((img) => img !== url));
+    setRemoverExternas((prev) => [...prev, url]);
+  }
+
+  function removerImagemInterna(url: string) {
+    setImagensInternasAtuais((prev) => prev.filter((img) => img !== url));
+    setRemoverInternas((prev) => [...prev, url]);
+  }
+
+  /* =========================
+     Submit
+  ========================= */
+
+  async function onSubmit(data: UpdateProductFormData) {
+    if (!id) return;
+
+    await atualizarProduto(id, {
+      ...data,
+      imgs_removidas_extenas: removerExternas,
+      imgs_removidas_internas: removerInternas,
+    });
+  }
+
+  /* =========================
+     Render
+  ========================= */
+
+  if (loading) return <p>Carregando produto...</p>;
+
+  return (
+    <section className="flex flex-col gap-2 bg-gray-100/20 p-2 border-2 rounded-2xl">
+      <header>
+        <div className="flex justify-between">
+          <Link to="/produtos">
+            <ArrowLeft size={22} />
+          </Link>
+
+          <ChartColumnStacked
+            size={22}
+            onClick={() => setOpen(true)}
+            className="cursor-pointer"
+          />
+        </div>
+
+        <h1 className="text-center font-medium text-xl mb-3">
+          Atualizar Produto
+        </h1>
+      </header>
+
+      <main className="sm:w-[35%] w-full mx-auto">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+
+          <Label>Nome</Label>
+          <Input {...register("nome")} />
+          {errors.nome && <p className="text-red-500 text-xs">{errors.nome.message}</p>}
+
+          <Label>Preço</Label>
+          <Input {...register("preco")} />
+
+          <Label>Largura</Label>
+          <Input type="number" {...register("largura")} />
+
+          <Label>Altura</Label>
+          <Input type="number" {...register("altura")} />
+
+          <Label>Estoque</Label>
+          <Input type="number" {...register("estoque")} />
+
+          <Label>Quantidade mínima</Label>
+          <Input type="number" {...register("quantidade_minima_estoque")} />
+
+          <Label>Unidade</Label>
+          <Input {...register("unidade_medida")} />
+
+          {/* Categoria */}
+          <Label>Categoria</Label>
+          <select {...register("id_categoria")}>
+            <option value="">Selecione</option>
+            {categorias.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.nome}
+              </option>
+            ))}
+          </select>
+
+          {/* Subcategoria */}
+          <Label>Subcategoria</Label>
+          <select {...register("id_subcategoria")} disabled={!categoriaSelecionada}>
+            <option value="">Selecione</option>
+            {subCategorias
+              .filter((sub: SubCategoria) => sub.categoriaId === categoriaSelecionada)
+              .map((sub: SubCategoria) => (
+                <option key={sub.id} value={sub.id}>
+                  {sub.nome}
+                </option>
+              ))}
+          </select>
+
+          {/* IMAGENS ATUAIS */}
+          <div>
+            <Label>Imagens Externas Atuais</Label>
+            <div className="flex gap-2 flex-wrap">
+              {imagensExternasAtuais.map((img) => (
+                <div key={img} className="relative">
+                  <img src={img} className="w-20 h-20 object-cover rounded" />
+                  <Trash2
+                    size={16}
+                    className="absolute top-1 right-1 cursor-pointer text-red-600"
+                    onClick={() => removerImagemExterna(img)}
+                  />
                 </div>
+              ))}
+            </div>
+          </div>
 
-
-                <div className="w-full mb-3">
-                    <h1 className="text-center font-medium text-xl">Atualizar Produto</h1>
+          <div>
+            <Label>Imagens Internas Atuais</Label>
+            <div className="flex gap-2 flex-wrap">
+              {imagensInternasAtuais.map((img) => (
+                <div key={img} className="relative">
+                  <img src={img} className="w-20 h-20 object-cover rounded" />
+                  <Trash2
+                    size={16}
+                    className="absolute top-1 right-1 cursor-pointer text-red-600"
+                    onClick={() => removerImagemInterna(img)}
+                  />
                 </div>
-            </header>
+              ))}
+            </div>
+          </div>
 
-            <main className="sm:w-[35%] w-full mx-auto">
-                <form className="space-y-5 w-full">
-                    <div className="space-y-4">
-                        <div className="flex sm:flex-row flex-col gap-3">
-                            <div className="flex-1">
-                                <Label>Nome</Label>
-                                <Input placeholder="Ex: Cinto" type="text" required />
-                            </div>
-                            <div>
-                                <Label>Preço</Label>
-                                <div className="flex rounded-md shadow-xs">
-                                    <span className="border-input bg-background text-muted-foreground -z-10 inline-flex items-center rounded-s-md border px-3 text-sm">
-                                        R$
-                                    </span>
-                                    <Input
-                                        className="-ms-px rounded-s-none shadow-none"
-                                        placeholder="0.00"
-                                        type="text"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="flex flex-row gap-3">
-                            <div className="flex-1">
-                                <Label>Largura - cm</Label>
-                                <Input placeholder="Ex: 23" type="number" required />
-                            </div>
-                            <div className="flex-1">
-                                <Label>Altura - cm</Label>
-                                <Input placeholder="Ex: 15" type="number" required />
-                            </div>
-                        </div>
-                        <div className="*:not-first:mt-2">
-                            <Label>Imagem interna</Label>
-                            <Input
-                                className="p-0 pe-3 file:me-3 file:border-0 file:border-e"
-                                type="file"
-                            />
-                        </div>
-                        <div className="*:not-first:mt-2">
-                            <Label>Imagem externa</Label>
-                            <Input
-                                className="p-0 pe-3 file:me-3 file:border-0 file:border-e"
-                                type="file"
-                            />
-                        </div>
-                        <div className="*:not-first:mt-2">
-                            <Label>Descrição</Label>
-                            <Textarea placeholder="Escreva uma pequena descrição do produto" />
-                        </div>
+          {/* Novas imagens */}
+          <Label>Adicionar Imagem Externa</Label>
+          <Input type="file" multiple {...register("img_externa_nova")} />
 
-                        <RadioGroup
-                            className="gap-6"
-                            value={selectedValue}
-                            onValueChange={setSelectedValue}
-                        >
-                            <div>
-                                <div className="flex items-start gap-2">
-                                    <RadioGroupItem
-                                        value="with-expansion"
-                                        id={`${radioId}-1`}
-                                        aria-describedby={`${radioId}-1-description`}
-                                        aria-controls={inputId}
-                                    />
-                                    <div className="grow">
-                                        <div className="grid grow gap-2">
-                                            <Label htmlFor={`${radioId}-1`}>Promoção</Label>
-                                            <p
-                                                id={`${radioId}-1-description`}
-                                                className="text-muted-foreground text-xs"
-                                            >
-                                                Este produto será incluido em promoção
-                                            </p>
-                                        </div>
-                                        {/* Expandable field */}
-                                        <div
-                                            role="region"
-                                            id={inputId}
-                                            aria-labelledby={`${radioId}-1`}
-                                            className="grid transition-all ease-in-out data-[state=collapsed]:grid-rows-[0fr] data-[state=collapsed]:opacity-0 data-[state=expanded]:grid-rows-[1fr] data-[state=expanded]:opacity-100"
-                                            data-state={
-                                                selectedValue === "with-expansion" ? "expanded" : "collapsed"
-                                            }
-                                        >
-                                            <div className="pointer-events-none -m-2 overflow-hidden p-2">
-                                                <div className="pointer-events-auto mt-3 relative">
-                                                    <Label>Preço com promoção</Label>
-                                                    <div className="flex rounded-md shadow-xs">
-                                                        <span className="border-input bg-background text-muted-foreground -z-10 inline-flex items-center rounded-s-md border px-3 text-sm">
-                                                            R$
-                                                        </span>
-                                                        <Input
-                                                            ref={inputRef}
-                                                            type="text"
-                                                            id="radio-05-additional-info"
-                                                            placeholder="0.00"
-                                                            aria-label="Additional Information"
-                                                            disabled={selectedValue !== "with-expansion"}
-                                                        />
-                                                    </div>
+          <Label>Adicionar Imagem Interna</Label>
+          <Input type="file" multiple {...register("img_interna_nova")} />
 
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+          {/* Promoção */}
+          <RadioGroup
+            value={emPromocao ? "sim" : "nao"}
+            onValueChange={(v) => setValue("emPromocao", v === "sim")}
+          >
+            <div className="flex gap-2">
+              <RadioGroupItem value="sim" id={`${radioId}-1`} />
+              <Label htmlFor={`${radioId}-1`}>Promoção</Label>
+            </div>
 
-                            <div className="flex items-start gap-2">
-                                <RadioGroupItem
-                                    value="without-expansion"
-                                    id={`${radioId}-2`}
-                                    aria-describedby={`${radioId}-2-description`}
-                                />
-                                <div className="grid grow gap-2">
-                                    <Label htmlFor={`${radioId}-2`}>Sem promoção</Label>
-                                    <p
-                                        id={`${radioId}-2-description`}
-                                        className="text-muted-foreground text-xs"
-                                    >
-                                        Este produto não será incluido em promoção
-                                    </p>
-                                </div>
-                            </div>
-                        </RadioGroup>
-                    </div>
+            <div className="flex gap-2">
+              <RadioGroupItem value="nao" id={`${radioId}-2`} />
+              <Label htmlFor={`${radioId}-2`}>Sem promoção</Label>
+            </div>
+          </RadioGroup>
 
-                    <Button type="button" className="w-full bg-red-900 dark:text-white dark:hover:text-black cursor-pointer">
-                        Atualizar
-                    </Button>
-                </form>
-            </main >
-            {/* Componente Dialog separado */}
-            < DialogAddCategory open={open} onOpenChange={setOpen} />
-        </section >
-    )
+          {emPromocao && (
+            <Input
+              placeholder="Preço promocional"
+              {...register("precoPromocional")}
+            />
+          )}
+
+          <Button type="submit" disabled={loading} className="w-full bg-red-900 text-white">
+            {loading ? "Atualizando..." : "Atualizar"}
+          </Button>
+        </form>
+      </main>
+
+      <DialogAddCategory open={open} onOpenChange={setOpen} />
+    </section>
+  );
 }

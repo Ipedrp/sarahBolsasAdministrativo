@@ -17,7 +17,7 @@ import { Sucess } from "@/components/notification/Sucess";
 import { Error } from "@/components/notification/Error";
 
 
-// ---- Dados estáticos ----|AZSxcf
+// ---- Dados estáticos ----
 // const produtosFake = Array.from({ length: 23 }, (_, i) => ({
 //     id: i + 1,
 //     nome: `Produto ${i + 1}`,
