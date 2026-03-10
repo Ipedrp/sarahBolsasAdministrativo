@@ -12,9 +12,9 @@ const baseProductSchema = z.object({
   largura: z.coerce.number().positive("Largura obrigatória"),
   altura: z.coerce.number().positive("Altura obrigatória"),
 
-  peso: z.coerce.number().optional(),
-  profundidade: z.coerce.number().optional(),
-
+  peso: z.coerce.number().nullable().optional(),
+  profundidade: z.coerce.number().nullable().optional(),
+  
   descricao: z.string().optional(),
 
   emPromocao: z.boolean(),

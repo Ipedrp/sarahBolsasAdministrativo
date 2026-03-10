@@ -44,3 +44,28 @@ export interface Produto {
   estoque: Estoque;
 }
 
+export interface UpdateProdutoPayload {
+  nome: string;
+  preco: number;
+  largura: number;
+  altura: number;
+  emPromocao: boolean;
+  estoque: number;
+  quantidade_minima_estoque: number;
+  alertar_estoque: boolean;
+  unidade_medida: string;
+  id_categoria: string;
+  id_subcategoria: string;
+
+  descricao?: string;
+  peso?: number | null;
+  profundidade?: number | null;
+  precoPromocional?: number | null;
+
+  img_externa_nova?: File | null;
+  img_interna_nova?: File | null;
+
+  imgs_removidas_extenas?: string[];
+  imgs_removidas_internas?: string[];
+}
+

@@ -13,10 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 import DialogAddCategory from "@/components/dialog/DialogAddCategory";
 
-import {
-  updateProductSchema,
-  type UpdateProductFormData,
-} from "@/schemas/ProductSchema";
+import { updateProductSchema, type UpdateProductFormData } from "@/schemas/ProductSchema";
 
 import { useProduct } from "@/contexts/ProductContext";
 import { useCategoria } from "@/contexts/CategoryContext";
@@ -115,15 +112,21 @@ export function UpdateProduct() {
      Submit
   ========================= */
 
-  async function onSubmit(data: UpdateProductFormData) {
-    if (!id) return;
+async function onSubmit(data: UpdateProductFormData) {
+  if (!id) return;
 
-    await atualizarProduto(id, {
-      ...data,
-      imgs_removidas_extenas: removerExternas,
-      imgs_removidas_internas: removerInternas,
-    });
-  }
+  const payload = {
+    ...data,
+    precoPromocional: data.precoPromocional ?? undefined,
+    peso: data.peso ?? undefined,
+    profundidade: data.profundidade ?? undefined,
+
+    imgs_removidas_extenas: removerExternas,
+    imgs_removidas_internas: removerInternas,
+  };
+
+  await atualizarProduto(id, payload);
+}
 
   /* =========================
      Render
@@ -152,33 +155,79 @@ export function UpdateProduct() {
       </header>
 
       <main className="sm:w-[35%] w-full mx-auto">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 w-full">
 
-          <Label>Nome</Label>
-          <Input {...register("nome")} />
-          {errors.nome && <p className="text-red-500 text-xs">{errors.nome.message}</p>}
+          {/* Nome e Preço */}
+          {/* Nome e Preço */}
+          <div className="flex sm:flex-row flex-col gap-3">
+            <div className="flex-1">
+              <Label>Nome</Label>
+              <Input {...register("nome")} />
+            </div>
 
-          <Label>Preço</Label>
-          <Input {...register("preco")} />
+            <div className="flex-1">
+              <Label>Preço</Label>
+              <Input
+                type="number"
+                {...register("preco", { valueAsNumber: true })}
+              />
+            </div>
+          </div>
 
-          <Label>Largura</Label>
-          <Input type="number" {...register("largura")} />
+          {/* Dimensões */}
+          <div className="flex gap-3">
+            <div className="flex-1">
+              <Label>Largura</Label>
+              <Input
+                type="number"
+                {...register("largura", { valueAsNumber: true })}
+              />
+            </div>
 
-          <Label>Altura</Label>
-          <Input type="number" {...register("altura")} />
+            <div className="flex-1">
+              <Label>Altura</Label>
+              <Input
+                type="number"
+                {...register("altura", { valueAsNumber: true })}
+              />
+            </div>
+          </div>
 
-          <Label>Estoque</Label>
-          <Input type="number" {...register("estoque")} />
+          <Input
+            type="number"
+            {...register("peso", { valueAsNumber: true })}
+          />
+          {errors.peso && <p className="text-red-500 text-xs">{errors.peso.message}</p>}
 
-          <Label>Quantidade mínima</Label>
-          <Input type="number" {...register("quantidade_minima_estoque")} />
+          <Input
+            type="number"
+            {...register("profundidade", { valueAsNumber: true })}
+          />
+          {errors.profundidade && <p className="text-red-500 text-xs">{errors.profundidade.message}</p>}
 
-          <Label>Unidade</Label>
+          {/* Estoque */}
+          <Label>Quatidade em estoque</Label>
+          <Input
+            type="number"
+            {...register("estoque", { valueAsNumber: true })}
+          />
+
+          <Label>Quantidade mínima em estoque</Label>
+          <Input
+            type="number"
+            {...register("quantidade_minima_estoque", { valueAsNumber: true })}
+          />
+          {errors.quantidade_minima_estoque && <p className="text-red-500 text-xs">{errors.quantidade_minima_estoque.message}</p>}
+
+          <Label>Unidade de medida</Label>
           <Input {...register("unidade_medida")} />
+          {errors.unidade_medida && <p className="text-red-500 text-xs">{errors.unidade_medida.message}</p>}
+
+          {/* Categoria / Subcategoria */}
 
           {/* Categoria */}
           <Label>Categoria</Label>
-          <select {...register("id_categoria")}>
+          <select className="block w-full px-3 py-2.5 rounded-md border text-sm mb-1" {...register("id_categoria")}>
             <option value="">Selecione</option>
             {categorias.map((cat) => (
               <option key={cat.id} value={cat.id}>
@@ -189,7 +238,7 @@ export function UpdateProduct() {
 
           {/* Subcategoria */}
           <Label>Subcategoria</Label>
-          <select {...register("id_subcategoria")} disabled={!categoriaSelecionada}>
+          <select className="block w-full px-3 py-2.5 rounded-md border text-sm mb-1" {...register("id_subcategoria")} disabled={!categoriaSelecionada}>
             <option value="">Selecione</option>
             {subCategorias
               .filter((sub: SubCategoria) => sub.categoriaId === categoriaSelecionada)
@@ -201,37 +250,40 @@ export function UpdateProduct() {
           </select>
 
           {/* IMAGENS ATUAIS */}
-          <div>
-            <Label>Imagens Externas Atuais</Label>
-            <div className="flex gap-2 flex-wrap">
-              {imagensExternasAtuais.map((img) => (
-                <div key={img} className="relative">
-                  <img src={img} className="w-20 h-20 object-cover rounded" />
-                  <Trash2
-                    size={16}
-                    className="absolute top-1 right-1 cursor-pointer text-red-600"
-                    onClick={() => removerImagemExterna(img)}
-                  />
-                </div>
-              ))}
+          <div className="flex gap-3">
+            <div className="flex-1">
+              <Label>Imagem Externa Atual</Label>
+              <div className="flex gap-2 flex-wrap">
+                {imagensExternasAtuais.map((img) => (
+                  <div key={img} className="relative">
+                    <img src={img} className="w-20 h-20 object-cover rounded" />
+                    <Trash2
+                      size={16}
+                      className="absolute top-1 right-1 cursor-pointer text-red-600"
+                      onClick={() => removerImagemExterna(img)}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex-1">
+              <Label>Imagem Interna Atual</Label>
+              <div className="flex gap-2 flex-wrap">
+                {imagensInternasAtuais.map((img) => (
+                  <div key={img} className="relative">
+                    <img src={img} className="w-20 h-20 object-cover rounded" />
+                    <Trash2
+                      size={16}
+                      className="absolute top-1 right-1 cursor-pointer text-red-600"
+                      onClick={() => removerImagemInterna(img)}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
-          <div>
-            <Label>Imagens Internas Atuais</Label>
-            <div className="flex gap-2 flex-wrap">
-              {imagensInternasAtuais.map((img) => (
-                <div key={img} className="relative">
-                  <img src={img} className="w-20 h-20 object-cover rounded" />
-                  <Trash2
-                    size={16}
-                    className="absolute top-1 right-1 cursor-pointer text-red-600"
-                    onClick={() => removerImagemInterna(img)}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
 
           {/* Novas imagens */}
           <Label>Adicionar Imagem Externa</Label>
@@ -239,6 +291,16 @@ export function UpdateProduct() {
 
           <Label>Adicionar Imagem Interna</Label>
           <Input type="file" multiple {...register("img_interna_nova")} />
+
+          {/* Descrição */}
+
+          <Label>Descrição do produto</Label>
+          <Textarea
+            placeholder="Ex: Bolsa 100% couro..."
+            {...register("descricao")}
+          />
+          {errors.descricao && <p className="text-red-500 text-xs">{errors.descricao.message}</p>}
+
 
           {/* Promoção */}
           <RadioGroup
@@ -258,13 +320,14 @@ export function UpdateProduct() {
 
           {emPromocao && (
             <Input
+              type="number"
               placeholder="Preço promocional"
-              {...register("precoPromocional")}
+              {...register("precoPromocional", { valueAsNumber: true })}
             />
           )}
 
           <Button type="submit" disabled={loading} className="w-full bg-red-900 text-white">
-            {loading ? "Atualizando..." : "Atualizar"}
+            Atualizar
           </Button>
         </form>
       </main>
