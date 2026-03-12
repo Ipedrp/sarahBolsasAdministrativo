@@ -21,7 +21,6 @@ export function UpdateSubcategory() {
     const {
         atualizarSubCategoria,
         getSubCategoriaById,
-        loading,
     } = useSubCategoria();
 
     const { categorias, getAllCategorias } = useCategoria();

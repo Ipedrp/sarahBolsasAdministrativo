@@ -41,7 +41,6 @@ export function UpdateProduct() {
     handleSubmit,
     watch,
     setValue,
-    setFocus,
     formState: { errors },
     reset,
   } = useForm({

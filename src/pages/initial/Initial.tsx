@@ -1,7 +1,6 @@
 import { Cards } from "@/components/card/Cards";
-import { ChartColumnStacked, ScanBarcode, Images, Waypoints } from "lucide-react";
+import { ChartColumnStacked, ScanBarcode, Waypoints } from "lucide-react";
 import { Link } from "react-router";
-import { useState } from "react"
 
 
 export function Initial() {
