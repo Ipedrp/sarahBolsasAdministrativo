@@ -15,6 +15,7 @@ import { useEffect } from "react";
 import { useCategoria } from "@/contexts/CategoryContext";
 import { Sucess } from "@/components/notification/Sucess";
 import { Error } from "@/components/notification/Error";
+import { LoadingAnimation } from "@/components/load/LoadingAnimation";
 
 // ---- Dados estáticos (apenas nome e descrição) ----
 // const categoriasFake = Array.from({ length: 23 }, (_, i) => ({
@@ -80,7 +81,11 @@ export function ListCategory() {
   }
 
 
-  if (loading) return <p>Carregando...</p>;
+  if (loading) return (
+    <div className="fixed inset-0 flex items-center justify-center bg-black/5 backdrop-blur-sm">
+      <LoadingAnimation className="w-64 h-64" />
+    </div>
+  );
   if (errorMessage) return <p>{errorMessage}</p>;
 
   return (

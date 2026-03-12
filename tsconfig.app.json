@@ -26,10 +26,10 @@
     /* Shadcn ui */
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
-    }
+      "@/*": ["./src/*"]
+    },
+
+    "resolveJsonModule": true   // ← apenas isso
   },
   "include": ["src"]
 }
